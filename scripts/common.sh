@@ -39,7 +39,7 @@ detect_architecture() {
             echo "riscv64"
         ;;
         *)
-            log "ERROR" "Unsupported CPU architecture: $ARCH" "$RED" >&2
+            log "ERROR" "NodeのCPUが対応していません。管理者にお尋ねください。: $ARCH" "$RED" >&2
             return 1
         ;;
     esac
@@ -50,16 +50,9 @@ print_main_banner() {
     printf "\033c"
     printf "${CYAN}╔═══════════════════════════════════════════════════════════════════════════════╗${NC}\n"
     printf "${CYAN}║                                                                               ║${NC}\n"
-    printf "${CYAN}║            ${PURPLE}${BOLD}██╗   ██╗██████╗ ███████╗    ███████╗ ██████╗  ██████╗${CYAN}             ║${NC}\n"
-    printf "${CYAN}║            ${PURPLE}${BOLD}██║   ██║██╔══██╗██╔════╝    ██╔════╝██╔════╝ ██╔════╝${CYAN}             ║${NC}\n"
-    printf "${CYAN}║            ${PURPLE}${BOLD}██║   ██║██████╔╝███████╗    █████╗  ██║  ███╗██║  ███╗${CYAN}            ║${NC}\n"
-    printf "${CYAN}║            ${PURPLE}${BOLD}╚██╗ ██╔╝██╔═══╝ ╚════██║    ██╔══╝  ██║   ██║██║   ██║${CYAN}            ║${NC}\n"
-    printf "${CYAN}║             ${PURPLE}${BOLD}╚████╔╝ ██║     ███████║    ███████╗╚██████╔╝╚██████╔╝${CYAN}            ║${NC}\n"
-    printf "${CYAN}║              ${PURPLE}${BOLD}╚═══╝  ╚═╝     ╚══════╝    ╚══════╝ ╚═════╝  ╚═════╝${CYAN}             ║${NC}\n"
+    printf "${CYAN}║                                ${GREEN}✨  ArkHost VPS${CYAN}                                 ║${NC}\n"
     printf "${CYAN}║                                                                               ║${NC}\n"
-    printf "${CYAN}║                      ${GREEN}✨  Lightweight • Fast • Reliable ✨${CYAN}                       ║${NC}\n"
-    printf "${CYAN}║                                                                               ║${NC}\n"
-    printf "${CYAN}║                           ${DIM}© 2021 - $(date +%Y) ${PURPLE}@ysdragon${CYAN}                             ║${NC}\n"
+    printf "${CYAN}║                           ${DIM}© 2026 - $(date +%Y) ${PURPLE}@ysdragon${CYAN}                             ║${NC}\n"
     printf "${CYAN}║                                                                               ║${NC}\n"
     printf "${CYAN}╚═══════════════════════════════════════════════════════════════════════════════╝${NC}\n"
     printf "\n"
