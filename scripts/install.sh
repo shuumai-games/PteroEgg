@@ -54,13 +54,13 @@ ARCH=$(uname -m)
 # Verify network connectivity
 check_network() {
     if ! curl -s --head "$BASE_URL" >/dev/null; then
-        error_exit "Unable to connect to $BASE_URL. Please check your internet connection."
+        error_exit "$BASE_URL に接続できません。インターネットを確かめてください。"
     fi
 }
 
 # Function to cleanup temporary files
 cleanup() {
-    log "INFO" "Cleaning up temporary files..." "$YELLOW"
+    log "INFO" "Tempファイルを削除中..." "$YELLOW"
     rm -f "$ROOTFS_DIR/rootfs.tar.xz"
     rm -rf /tmp/sbin
 }
@@ -126,7 +126,7 @@ install() {
             fi
         done < "$temp_file"
         
-        printf "* [0] Go Back\n"
+        printf "* [0] 戻る\n"
         
         # Version selection with validation
         version=""
@@ -139,7 +139,7 @@ install() {
             elif echo "$version" | grep -q '^[0-9]*$' && [ "$version" -ge 1 ] && [ "$version" -le "${version_count}" ]; then
                 break
             fi
-            log "ERROR" "Invalid selection. Please try again." "$RED"
+            log "ERROR" "無効な選択肢です。もう一度お試しください。" "$RED"
         done
     fi
     
@@ -183,14 +183,14 @@ chimera_handler() {
     base_url="https://repo.chimera-linux.org/live/latest/"
     
     latest_file=$(curl -s "$base_url" | grep -o "chimera-linux-$ARCH-ROOTFS-[0-9]\{8\}-bootstrap\.tar\.gz" | sort -V | tail -n 1) ||
-    error_exit "Failed to fetch Chimera Linux version"
+    error_exit "Chimera Linux のバージョンを取得できませんでした"
     
     if [ -n "$latest_file" ]; then
         date=$(echo "$latest_file" | grep -o '[0-9]\{8\}')
         chimera_url="${base_url}chimera-linux-$ARCH-ROOTFS-$date-bootstrap.tar.gz"
         install_custom "Chimera Linux" "$chimera_url"
     else
-        error_exit "No suitable Chimera Linux version found"
+        error_exit "適切なChimera Linuxのバージョンが見つかりませんでした"
     fi
 }
 
@@ -210,7 +210,7 @@ download_and_extract_rootfs() {
     
     # Check if the distro support $ARCH_ALT
     if ! curl -s "$arch_url" | grep -q "$ARCH_ALT"; then
-        error_exit "This distro doesn't support $ARCH_ALT. Exiting...."
+        error_exit "このディストリビューションは $ARCH_ALT をサポートしていません。終了します…"
         cleanup
         exit 1
     fi
@@ -223,13 +223,13 @@ download_and_extract_rootfs() {
     mkdir -p "$ROOTFS_DIR"
 
     if ! curl -Ls "${url}${latest_version}rootfs.tar.xz" -o "$ROOTFS_DIR/rootfs.tar.xz"; then
-        error_exit "Failed to download rootfs"
+        error_exit "rootfsのダウンロードに失敗しました"
     fi
 
     
     log "INFO" "Extracting rootfs..." "$GREEN"
     if ! tar -xf "$ROOTFS_DIR/rootfs.tar.xz" -C "$ROOTFS_DIR"; then
-        error_exit "Failed to extract rootfs"
+        error_exit "rootfsの回答に失敗しました"
     fi
     
     # Removing existing /etc/resolv.conf to allow modification
@@ -258,7 +258,7 @@ post_install_config() {
     
     case "$distro" in
         "archlinux")
-            log "INFO" "Configuring Arch Linux specific settings..." "$GREEN"
+            log "INFO" "Arch Linux の設定中..." "$GREEN"
             sed -i '/^#RootDir/s/^#//' "$ROOTFS_DIR/etc/pacman.conf"
             sed -i 's|/var/lib/pacman/|/var/lib/pacman|' "$ROOTFS_DIR/etc/pacman.conf"
             sed -i '/^#DBPath/s/^#//' "$ROOTFS_DIR/etc/pacman.conf"
@@ -269,7 +269,7 @@ post_install_config() {
 # Main menu display
 display_menu() {
     print_main_banner
-    printf "\n${YELLOW}Please choose your favorite distro:${NC}\n\n"
+    printf "\n${YELLOW}このVPSで使用するOSを選択してください:${NC}\n\n"
     
     # Display all distributions
     echo "$distributions" | while IFS= read -r line; do
@@ -280,7 +280,7 @@ display_menu() {
         fi
     done
     
-    printf "\n${YELLOW}Enter the desired distro (1-${num_distros}): ${NC}\n"
+    printf "\n${YELLOW}1-${num_distros} の番号を下の「コマンドを入力」から入れてください: ${NC}\n"
 }
 
 # Initial setup
@@ -305,7 +305,7 @@ else
 fi
 
 if [ -z "$distro_data" ]; then
-    error_exit "Invalid selection (1-${num_distros})"
+    error_exit "無効な選択です。1-${num_distros} で選んでください。"
 fi
 
 # Parse distribution data
