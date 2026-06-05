@@ -5,7 +5,7 @@ FROM alpine:3.23
 ENV PROOT_VERSION=5.4.0
 
 # Set locale
-ENV LANG=en_US.UTF-8
+ENV LANG=ja_JP.UTF-8
 
 # Install necessary packages
 RUN apk update && \
