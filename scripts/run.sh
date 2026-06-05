@@ -60,7 +60,7 @@ get_formatted_dir() {
 }
 
 print_instructions() {
-    log "INFO" "Type 'help' to view a list of available custom commands." "$YELLOW"
+    log "INFO" "「help」と打つことでArkHostVPS専用コマンドの一覧を表示できます。" "$YELLOW"
 }
 
 # Function to print prompt
@@ -84,7 +84,7 @@ save_to_history() {
 
 # Function reinstall the OS
 reinstall() {    
-    log "INFO" "Reinstalling the OS..." "$YELLOW"
+    log "INFO" "OSを再インストール中..." "$YELLOW"
     
     find / -mindepth 1 -xdev -delete > /dev/null 2>&1
 }
@@ -129,14 +129,14 @@ VNC_DIR="$HOME/.vnc"
 
 install_gui() {
     if [ -f "/gui_config.yml" ]; then
-        log "WARNING" "GUI is already installed. Run 'reinstall-gui' to reinstall." "$YELLOW"
+        log "WARNING" "GUIはすでにインストールされています。「reinstall-gui」を実行して再インストールしてください。" "$YELLOW"
         return 1
     fi
     
     if [ -f "/vnc_install.sh" ]; then
         sh /vnc_install.sh install
     else
-        log "ERROR" "GUI installation script not found." "$RED"
+        log "ERROR" "GUIインストールスクリプトが見つかりません。" "$RED"
         return 1
     fi
 }
@@ -174,23 +174,23 @@ parse_gui_config() {
 
 start_vnc() {
     if [ ! -f "$GUI_CONFIG_FILE" ]; then
-        log "ERROR" "GUI not installed. Run 'install-gui' first." "$RED"
+        log "ERROR" "GUIはまだインストールされていません。「install-gui」でインストールできます。" "$RED"
         return 1
     fi
     
     parse_gui_config
     
     if [ "$GUI_SERVER_TYPE" != "vnc" ] && [ "$GUI_SERVER_TYPE" != "both" ]; then
-        log "ERROR" "VNC server not configured. Server type: $GUI_SERVER_TYPE" "$RED"
+        log "ERROR" "VNCサーバーが設定されていません。サーバーの種類: $GUI_SERVER_TYPE" "$RED"
         return 1
     fi
     
     if pgrep -x "Xvnc" > /dev/null 2>&1 || pgrep -x "Xtightvnc" > /dev/null 2>&1; then
-        log "WARNING" "VNC server is already running." "$YELLOW"
+        log "WARNING" "VNCサーバーは起動中です." "$YELLOW"
         return 0
     fi
     
-    log "INFO" "Starting VNC server on port $VNC_PORT..." "$YELLOW"
+    log "INFO" "VNCサーバーを $VNC_PORT番ポートで起動中..." "$YELLOW"
     
     VNC_DISPLAY_NUM=$((VNC_PORT - 5900))
     if [ "$VNC_DISPLAY_NUM" -lt 1 ]; then
