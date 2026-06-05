@@ -89,7 +89,7 @@ install() {
         is_custom="false"
     fi
     
-    log "INFO" "Preparing to install $pretty_name..." "$GREEN"
+    log "INFO" "$pretty_name のインストールを準備中..." "$GREEN"
     
     if [ "$is_custom" = "true" ]; then
         url_path="$BASE_URL/$distro_name/current/$ARCH_ALT/"
@@ -99,7 +99,7 @@ install() {
     
     # Fetch available versions with error handling
     image_names=$(curl -s "$url_path" | grep 'href="' | grep -o '"[^/"]*/"' | tr -d '"/' | grep -v '^\.\.$') ||
-    error_exit "Failed to fetch available versions for $pretty_name"
+    error_exit "$pretty_name の利用可能なバージョンを取得できませんでした..."
     
     # Convert to a list format
     versions=""
@@ -131,7 +131,7 @@ install() {
         # Version selection with validation
         version=""
         while true; do
-            printf "${YELLOW}Enter the desired version (0-${version_count}): ${NC}\n"
+            printf "${YELLOW}0-${version_count} で希望のバージョンを入力してください: ${NC}\n"
             read -r version
             if [ "$version" = "0" ]; then
                 rm -f "$temp_file"
@@ -159,18 +159,18 @@ install_custom() {
     pretty_name="$1"
     url="$2"
     
-    log "INFO" "Installing $pretty_name..." "$GREEN"
+    log "INFO" "$pretty_nameをインストール中です..." "$GREEN"
     
     mkdir -p "$ROOTFS_DIR"
     
     file_name=$(basename "$url")
     
     if ! curl -Ls "$url" -o "$ROOTFS_DIR/$file_name"; then
-        error_exit "Failed to download $pretty_name rootfs"
+        error_exit "$pretty_name rootfsのダウンロードに失敗しました"
     fi
     
     if ! tar -xf "$ROOTFS_DIR/$file_name" -C "$ROOTFS_DIR"; then
-        error_exit "Failed to extract $pretty_name rootfs"
+        error_exit "$pretty_name rootfsの解凍に失敗しました"
     fi
     
     mkdir -p "$ROOTFS_DIR/home/container/"
