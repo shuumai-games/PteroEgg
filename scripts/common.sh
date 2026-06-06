@@ -50,7 +50,7 @@ print_main_banner() {
     printf "\033c"
     printf "${CYAN}╔═══════════════════════════════════════════════════════════════════════════════╗${NC}\n"
     printf "${CYAN}║                                                                               ║${NC}\n"
-    printf "${CYAN}║                                ${GREEN}  ArkHost VPS${CYAN}　                                 ║${NC}\n"
+    printf "${CYAN}║                                ${GREEN}  ArkHost VPS${CYAN}　                                ║${NC}\n"
     printf "${CYAN}║                               ${DIM}© $(date +%Y) ${PURPLE}©ArkHost ${CYAN}                                ║${NC}\n"
     printf "${CYAN}║                                                                               ║${NC}\n"
     printf "${CYAN}╚═══════════════════════════════════════════════════════════════════════════════╝${NC}\n"
