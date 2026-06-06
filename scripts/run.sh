@@ -640,7 +640,7 @@ execute_command() {
             exit 2
         ;;
         "sudo"*|"su"*)
-            log "ERROR" "You are already running as root." "$RED"
+            log "ERROR" "すでにrootユーザーとして実行されています。" "$RED"
             print_prompt "$user"
             return 0
         ;;
