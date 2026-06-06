@@ -148,7 +148,7 @@ install() {
     rm -f "$temp_file"
 
     selected_label=$(get_label "$distro_name" "$selected_version")
-    log "INFO" "Selected version: $selected_label" "$GREEN"
+    log "INFO" "選択されたバージョン: $selected_label" "$GREEN"
     
     # Download and extract rootfs
     download_and_extract_rootfs "$distro_name" "$selected_version" "$is_custom"
