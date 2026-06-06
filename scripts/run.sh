@@ -282,21 +282,21 @@ start_vnc() {
         fi
         sleep 2
     else
-        log "ERROR" "No VNC server found (Xtigervnc, Xvnc, or x11vnc)." "$RED"
+        log "ERROR" "VNCサーバーが見つかりません（Xtigervnc、Xvnc、またはx11vnc）" "$RED"
         return 1
     fi
     
     if pgrep -f "Xvnc.*:$VNC_DISPLAY_NUM" > /dev/null 2>&1 || pgrep -f "Xtigervnc.*:$VNC_DISPLAY_NUM" > /dev/null 2>&1 || pgrep -f "x11vnc" > /dev/null 2>&1; then
-        log "SUCCESS" "VNC server started on port $VNC_PORT (display :$VNC_DISPLAY_NUM)" "$GREEN"
-        log "INFO" "Connect using: <server-ip>:$VNC_PORT" "$YELLOW"
+        log "SUCCESS" "VNCサーバーがポート $VNC_PORT で起動しました（ディスプレイ :$VNC_DISPLAY_NUM）" "$GREEN"
+        log "INFO" "これに接続: <server-ip>:$VNC_PORT" "$YELLOW"
     else
-        log "ERROR" "VNC server failed to start. Check logs at ~/.vnc/" "$RED"
+        log "ERROR" "VNC サーバーの起動に失敗しました。~/.vnc/ にあるログを確認してください。" "$RED"
         return 1
     fi
 }
 
 stop_vnc() {
-    log "INFO" "Stopping VNC server..." "$YELLOW"
+    log "INFO" "VNCサーバーを停止中です..." "$YELLOW"
     
     parse_gui_config
     VNC_DISPLAY_NUM=$((VNC_PORT - 5900))
@@ -313,25 +313,25 @@ stop_vnc() {
     pkill -f "x11vnc" > /dev/null 2>&1
     pkill -f "Xvfb" > /dev/null 2>&1
     
-    log "SUCCESS" "VNC server stopped." "$GREEN"
+    log "SUCCESS" "VNCサーバーを停止しました。" "$GREEN"
 }
 
 start_novnc() {
     if [ ! -f "$GUI_CONFIG_FILE" ]; then
-        log "ERROR" "GUI not installed. Run 'install-gui' first." "$RED"
+        log "ERROR" "GUIがインストールされていません。「install-gui」を先に実行してください。" "$RED"
         return 1
     fi
     
     parse_gui_config
     
     if pgrep -f "websockify" > /dev/null 2>&1; then
-        log "WARNING" "noVNC is already running." "$YELLOW"
+        log "WARNING" "noVNCはすでに実行中です。" "$YELLOW"
         return 0
     fi
     
     start_vnc
     
-    log "INFO" "Starting noVNC on port $NOVNC_PORT..." "$YELLOW"
+    log "INFO" "ポート $NOVNC_PORT で noVNC を起動中です..." "$YELLOW"
     
     NOVNC_PATH=""
     if [ -d "/usr/share/novnc" ]; then
@@ -347,18 +347,18 @@ start_novnc() {
             websockify "$NOVNC_PORT" localhost:"$VNC_PORT" > /dev/null 2>&1 &
         fi
         sleep 2
-        log "SUCCESS" "noVNC started on port $NOVNC_PORT" "$GREEN"
-        log "INFO" "Open in browser: http://<server-ip>:$NOVNC_PORT/vnc.html" "$YELLOW"
+        log "SUCCESS" "noVNCが $NOVNC_PORT番ポートで起動しました。" "$GREEN"
+        log "INFO" "これにアクセス: http://<server-ip>:$NOVNC_PORT/vnc.html" "$YELLOW"
     else
-        log "ERROR" "websockify not found. noVNC may not be installed." "$RED"
+        log "ERROR" "websockifyが見つかりません。noVNCがインストールされていない可能性があります。" "$RED"
         return 1
     fi
 }
 
 stop_novnc() {
-    log "INFO" "Stopping noVNC..." "$YELLOW"
+    log "INFO" "noVNCを停止中です..." "$YELLOW"
     pkill -f "websockify" > /dev/null 2>&1
-    log "SUCCESS" "noVNC stopped." "$GREEN"
+    log "SUCCESS" "noVNCを停止しました。" "$GREEN"
 }
 
 install_cloudflared() {
@@ -366,7 +366,7 @@ install_cloudflared() {
         return 0
     fi
     
-    log "INFO" "Installing cloudflared..." "$YELLOW"
+    log "INFO" "Cloudflaredをインストール中です..." "$YELLOW"
     
     arch=$(uname -m)
     case "$arch" in
@@ -374,7 +374,7 @@ install_cloudflared() {
         aarch64) cf_arch="arm64" ;;
         armv7l) cf_arch="arm" ;;
         *) 
-            log "ERROR" "Unsupported architecture: $arch" "$RED"
+            log "ERROR" "サポートされていないCPUアーキテクチャ: $arch" "$RED"
             return 1
             ;;
     esac
@@ -386,22 +386,22 @@ install_cloudflared() {
     elif command -v curl > /dev/null 2>&1; then
         curl -sL -o /usr/local/bin/cloudflared "$cf_url"
     else
-        log "ERROR" "wget or curl required to download cloudflared" "$RED"
+        log "ERROR" "cloudflaredをダウンロードするにはCurlかWgetが必要ですが、インストールされていません。" "$RED"
         return 1
     fi
     
     chmod +x /usr/local/bin/cloudflared
-    log "SUCCESS" "cloudflared installed" "$GREEN"
+    log "SUCCESS" "cloudflaredのインストールが完了しました。" "$GREEN"
 }
 
 start_tunnel() {
     if [ ! -f "$GUI_CONFIG_FILE" ]; then
-        log "ERROR" "GUI not installed. Run 'install-gui' first." "$RED"
+        log "ERROR" "GUIがまだインストールされていません。「install-gui」を先に実行してください。" "$RED"
         return 1
     fi
     
     if pgrep -f "cloudflared.*tunnel" > /dev/null 2>&1; then
-        log "WARNING" "Tunnel is already running." "$YELLOW"
+        log "WARNING" "Tunnelはすでに起動しています。" "$YELLOW"
         return 0
     fi
     
@@ -424,11 +424,11 @@ start_tunnel() {
     done
     
     if [ $retries -eq 10 ]; then
-        log "ERROR" "noVNC not listening on port $NOVNC_PORT after 10 seconds" "$RED"
+        log "ERROR" "noVNCは10秒後にポート$NOVNC_PORTでのリスニングを停止します。" "$RED"
         return 1
     fi
     
-    log "INFO" "Starting Cloudflare tunnel for noVNC (port $NOVNC_PORT)..." "$YELLOW"
+    log "INFO" "noVNC用のCloudflareトンネルを$NOVNC_PORT番で開始します..." "$YELLOW"
     
     TUNNEL_LOG="/tmp/cloudflared.log"
     cloudflared tunnel --url "http://localhost:$NOVNC_PORT" > "$TUNNEL_LOG" 2>&1 &
@@ -438,28 +438,28 @@ start_tunnel() {
     TUNNEL_URL=$(grep -o 'https://[^[:space:]]*\.trycloudflare\.com' "$TUNNEL_LOG" | head -1)
     
     if [ -n "$TUNNEL_URL" ]; then
-        log "SUCCESS" "Tunnel started!" "$GREEN"
+        log "SUCCESS" "トンネルが起動しました!" "$GREEN"
         printf "\n${CYAN}========================================${NC}\n"
         printf "${GREEN}noVNC URL: ${WHITE}${TUNNEL_URL}/vnc.html${NC}\n"
         printf "${CYAN}========================================${NC}\n\n"
-        log "INFO" "Share this URL to access your desktop from anywhere" "$YELLOW"
+        log "INFO" "このURLを共有して、どこからでもデスクトップにアクセスしましょう！" "$YELLOW"
     else
-        log "WARNING" "Tunnel started but URL not yet available" "$YELLOW"
-        log "INFO" "Check $TUNNEL_LOG for the URL" "$YELLOW"
+        log "WARNING" "トンネルの起動は完了しましたが、URLはまだ利用できません..." "$YELLOW"
+        log "INFO" "URLについては $TUNNEL_LOG を確認してください。" "$YELLOW"
     fi
 }
 
 stop_tunnel() {
-    log "INFO" "Stopping Cloudflare tunnel..." "$YELLOW"
+    log "INFO" "Cloudflare tunnelを停止しています..." "$YELLOW"
     pkill -f "cloudflared.*tunnel" > /dev/null 2>&1
-    log "SUCCESS" "Tunnel stopped." "$GREEN"
+    log "SUCCESS" "Tunnelを停止しました。" "$GREEN"
 }
 
 gui_status() {
     printf "\n${CYAN}GUI Server Status:${NC}\n\n"
     
     if [ ! -f "$GUI_CONFIG_FILE" ]; then
-        log "INFO" "GUI not installed. Run 'install-gui' to install." "$YELLOW"
+        log "INFO" "GUIがまだインストールされていません。「install-gui」を先に実行してください。" "$YELLOW"
         return
     fi
     
@@ -469,29 +469,29 @@ gui_status() {
     
     printf "  ${YELLOW}VNC:${NC}\n"
     if pgrep -f "Xvnc" > /dev/null 2>&1 || pgrep -f "Xtigervnc" > /dev/null 2>&1 || pgrep -f "x11vnc" > /dev/null 2>&1; then
-        printf "    Status: ${GREEN}Running${NC}\n"
+        printf "    ステータス: ${GREEN}実行中${NC}\n"
     else
-        printf "    Status: ${RED}Stopped${NC}\n"
+        printf "    ステータス: ${RED}停止中${NC}\n"
     fi
     printf "    Port: $VNC_PORT\n\n"
     
     printf "  ${YELLOW}noVNC:${NC}\n"
     if pgrep -f "websockify" > /dev/null 2>&1; then
-        printf "    Status: ${GREEN}Running${NC}\n"
+        printf "    ステータス: ${GREEN}実行中${NC}\n"
     else
-        printf "    Status: ${RED}Stopped${NC}\n"
+        printf "    ステータス: ${RED}停止中${NC}\n"
     fi
     printf "    Port: $NOVNC_PORT\n\n"
     
     printf "  ${YELLOW}Tunnel:${NC}\n"
     if pgrep -f "cloudflared.*tunnel" > /dev/null 2>&1; then
-        printf "    Status: ${GREEN}Running${NC}\n"
+        printf "    ステータス: ${GREEN}実行中${NC}\n"
         TUNNEL_URL=$(grep -o 'https://[^[:space:]]*\.trycloudflare\.com' /tmp/cloudflared.log 2>/dev/null | head -1)
         if [ -n "$TUNNEL_URL" ]; then
             printf "    URL: ${TUNNEL_URL}/vnc.html\n"
         fi
     else
-        printf "    Status: ${RED}Stopped${NC}\n"
+        printf "    ステータス: ${RED}停止中${NC}\n"
     fi
     printf "\n"
 }
@@ -500,13 +500,13 @@ gui_status() {
 install_ssh() {
     # Check if SSH is already installed
     if [ -f "/usr/local/bin/ssh" ]; then
-        log "ERROR" "SSH is already installed." "$RED"
+        log "ERROR" "SSHはすでにインストールされています。" "$RED"
         return 1
     fi
 
     # Install wget if not found
     if ! command -v wget &> /dev/null; then
-        log "INFO" "Installing wget." "$YELLOW"
+        log "INFO" "Wgetをインストールしています..." "$YELLOW"
         install_wget
     fi
     
@@ -520,22 +520,22 @@ install_ssh() {
     
     # Download the SSH binary
     wget -q -O /usr/local/bin/ssh "$url" || {
-        log "ERROR" "Failed to download SSH." "$RED"
+        log "ERROR" "SSHのダウンロードに失敗しました。" "$RED"
         return 1
     }
     
     # Make the binary executable
     chmod +x /usr/local/bin/ssh || {
-        log "ERROR" "Failed to make ssh executable." "$RED"
+        log "ERROR" "SSHを実行可能にできませんでした。" "$RED"
         return 1
     }    
 
-    log "SUCCESS" "SSH installed successfully." "$GREEN"
+    log "SUCCESS" "SSHのインストールに成功しました。" "$GREEN"
 }
 
 # Function to show system status
 show_system_status() {
-    log "INFO" "System Status:" "$GREEN"
+    log "INFO" "システムステータス" "$GREEN"
     uptime
     free -h
     df -h
@@ -546,7 +546,7 @@ show_system_status() {
 create_backup() {
     # Check if tar is installed
     if ! command -v tar > /dev/null 2>&1; then
-        log "ERROR" "tar is not installed. Please install tar first." "$RED"
+        log "ERROR" "Tarがまだインストールされていません。先にTarをインストールしてください。" "$RED"
         return 1
     fi
 
@@ -567,9 +567,9 @@ create_backup() {
 ${exclude_file#/}
 EOF
 
-    log "INFO" "Starting backup process..." "$YELLOW"
+    log "INFO" "バックアップを実行中です..." "$YELLOW"
     (cd / && tar --numeric-owner -czf "$backup_file" -X "$exclude_file" .) > /dev/null 2>&1
-    log "SUCCESS" "Backup created at $backup_file" "$GREEN"
+    log "SUCCESS" "バックアップを $backup_file　に保存しました！" "$GREEN"
 
     # Clean up the exclude file
     rm -f "$exclude_file"
@@ -581,22 +581,22 @@ restore_backup() {
 
     # Check if tar is installed
     if ! command -v tar > /dev/null 2>&1; then
-        log "ERROR" "tar is not installed. Please install tar first." "$RED"
+        log "ERROR" "Tarがまだインストールされていません。先にTarをインストールしてください。" "$RED"
         return 1
     fi
 
     if [ -z "$backup_file" ]; then
-        log "INFO" "Usage: restore <backup_file>" "$YELLOW"
-        log "INFO" "Example: restore backup_20250620024221.tar.gz" "$YELLOW"
+        log "INFO" "使用法: restore <バックアップのパス>" "$YELLOW"
+        log "INFO" "例: restore backup_20250620024221.tar.gz" "$YELLOW"
         return 1
     fi
 
     if [ -f "/$backup_file" ]; then
-        log "INFO" "Starting restore process..." "$YELLOW"
+        log "INFO" "バックアップを復元中です..." "$YELLOW"
         tar --numeric-owner -xzf "/$backup_file" -C / --exclude="$backup_file" > /dev/null 2>&1
-        log "SUCCESS" "Backup restored from $backup_file" "$GREEN"
+        log "SUCCESS" "バックアップを $backup_file から復元しました！" "$GREEN"
     else
-        log "ERROR" "Backup file not found: $backup_file" "$RED"
+        log "ERROR" "バックアップファイルがありません... : $backup_file" "$RED"
     fi
 }
 
@@ -705,7 +705,7 @@ execute_command() {
             return 0
         ;;
         "restore")
-            log "ERROR" "No backup file specified. Usage: restore <backup_file>" "$RED"
+            log "ERROR" "バックアップファイルが指定されていません。使用方法：restore <バックアップのパス" "$RED"
             print_prompt "$user"
             return 0
         ;;
